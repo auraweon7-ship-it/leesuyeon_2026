@@ -18,7 +18,8 @@ export type AuthIdentity = {
   picture: string | null;
   /** 프로필 이미지가 없을 때 원형 아이콘 배경색 */
   avatarColor: string;
-  provider: "google";
+  /** google: Google 로그인 / admin: 관리자 비밀번호 로그인 (항상 교수자 역할) */
+  provider: "google" | "admin";
 };
 
 export type AuthUser = AuthIdentity & { role: UserRole };
@@ -56,6 +57,8 @@ export interface AuthService {
   prepare(): void;
   getCurrentUser(): AuthIdentity | null;
   signInWithGoogle(): Promise<AuthIdentity>;
+  /** 관리자 비밀번호 로그인. 비밀번호가 틀리면 null */
+  signInAsAdmin(password: string): Promise<AuthIdentity | null>;
   signOut(): Promise<void>;
 }
 
@@ -66,6 +69,23 @@ const STORAGE_KEY = "zhuiju.authUser.v1";
 const LEGACY_DEMO_KEY = "zhuiju.demoUser";
 
 const AVATAR_COLORS = ["#A9D6F5", "#F6D3DF", "#C9EBDD", "#DCD5F7", "#FBE3B5"];
+
+// 관리자 비밀번호의 SHA-256 (.env). 값이 없으면 관리자 로그인은 항상 실패한다.
+// 브라우저에서만 확인하므로 화면 접근 제어 수준이며 서버 권한 검증이 아니다.
+const ADMIN_PASSWORD_SHA256 = (import.meta.env.VITE_ADMIN_PASSWORD_SHA256 ?? "").trim().toLowerCase();
+const ADMIN_IDENTITY: AuthIdentity = {
+  id: "admin",
+  name: "관리자",
+  email: "admin",
+  picture: null,
+  avatarColor: AVATAR_COLORS[0],
+  provider: "admin",
+};
+
+const sha256Hex = async (text: string) => {
+  const digest = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+};
 
 const avatarColorFor = (email: string) => {
   let h = 0;
@@ -80,6 +100,7 @@ const storage = {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const u = JSON.parse(raw) as Partial<AuthIdentity>;
+      if (u.provider === "admin") return ADMIN_IDENTITY;
       if (u.provider !== "google" || !u.id || !u.email) return null;
       return {
         id: u.id,
@@ -189,6 +210,12 @@ const createGoogleAuthService = (): AuthService => {
             .then(request)
             .catch(() => fail("script-failed"));
       });
+    },
+    async signInAsAdmin(password) {
+      if (!ADMIN_PASSWORD_SHA256 || (await sha256Hex(password)) !== ADMIN_PASSWORD_SHA256) return null;
+      fail("cancelled");
+      storage.set(ADMIN_IDENTITY);
+      return ADMIN_IDENTITY;
     },
     async signOut() {
       fail("cancelled");

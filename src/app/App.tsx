@@ -5,7 +5,8 @@ import { LoginPromptProvider, LoginRequired } from "./auth/LoginPrompt";
 import { MobileNav, Sidebar, Topbar } from "./components/Layout";
 import { ToastProvider } from "./components/Toast";
 import { getView, navigate, useRoute } from "./router";
-import { learnerStore } from "./store";
+import { MemberProfilePrompt } from "./members/MemberProfilePrompt";
+import { learnerStore, memberStore } from "./store";
 import { AdminDashboardView } from "./views/admin/AdminDashboardView";
 import { CourseManagementView } from "./views/admin/CourseManagementView";
 import { FeedbackView } from "./views/admin/FeedbackView";
@@ -66,6 +67,8 @@ const Shell: React.FC = () => {
         picture: user.picture,
       });
     }
+    // 가입한 회원이면 최종 접속일을 갱신한다.
+    if (user?.provider === "google") void memberStore.touch(user.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userKey]);
 
@@ -112,6 +115,7 @@ const Shell: React.FC = () => {
         </main>
       </div>
       <MobileNav active={view} />
+      <MemberProfilePrompt />
     </div>
   );
 };

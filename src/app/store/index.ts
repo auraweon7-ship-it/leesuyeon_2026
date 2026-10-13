@@ -9,6 +9,7 @@ import { createLocalFeedbackStore, type FeedbackStore } from "./feedbackStore";
 import { createLocalInstructorStore, type InstructorStore } from "./instructorStore";
 import { createLocalLearnerStore, type LearnerStore } from "./learnerStore";
 import { createLocalLessonStore, type LessonStore } from "./lessonStore";
+import { createLocalMemberStore, type MemberStore } from "./memberStore";
 import { createLocalProgressStore, type ProgressStore } from "./progressStore";
 
 export const lessonStore: LessonStore = createLocalLessonStore();
@@ -18,6 +19,10 @@ export const feedbackStore: FeedbackStore = createLocalFeedbackStore();
 export const instructorStore: InstructorStore = createLocalInstructorStore();
 export const courseStore: CourseStore = createLocalCourseStore();
 export const enrollmentStore: EnrollmentStore = createLocalEnrollmentStore();
+export const memberStore: MemberStore = createLocalMemberStore();
+
+export const MEMBER_SCOPE_NOTE =
+  "회원 정보는 현재 브라우저의 localStorage에만 저장되는 프로토타입이에요. 다른 컴퓨터·브라우저에서 가입한 회원은 보이지 않아요.";
 
 /** 현재 화면에 보이는 학습자·기록 범위 안내 (로컬 저장소 구현) */
 export const LOCAL_SCOPE_NOTE =

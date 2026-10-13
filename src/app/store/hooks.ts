@@ -7,6 +7,7 @@ import {
   instructorStore,
   learnerStore,
   lessonStore,
+  memberStore,
   progressStore,
 } from "./index";
 import type {
@@ -16,6 +17,7 @@ import type {
   InstructorRecord,
   LearnerProfile,
   LessonProgress,
+  Member,
 } from "./models";
 
 /** 저장소 값을 읽고, 변경되면 다시 읽는다. 로딩 중에는 null. */
@@ -60,7 +62,10 @@ export const useAllProgress = (): LessonProgress[] | null =>
 export const useLearners = (): LearnerProfile[] | null =>
   useStoreQuery(() => learnerStore.list(), learnerStore.subscribe, "learners");
 
-export const useFeedbackDrafts = (): FeedbackDraft[] | null =>
+export const useMembers = (): Member[] | null =>
+  useStoreQuery(() => memberStore.list(), memberStore.subscribe, "members");
+
+export const useFeedbackDrafts =(): FeedbackDraft[] | null =>
   useStoreQuery(() => feedbackStore.list(), feedbackStore.subscribe, "feedback");
 
 export const useInstructors = (): InstructorRecord[] | null =>

@@ -41,6 +41,28 @@ export type LearnerProfile = {
   lastSeenAt: string;
 };
 
+/** 회원 가입정보. Google 로그인 후 입력하며, 관리자가 회원현황에서 승인·수정·삭제한다. */
+export type Member = {
+  /** Google 계정 고유 ID (AuthIdentity.id) */
+  id: string;
+  name: string;
+  university: string;
+  department: string;
+  grade: string;
+  studentId: string;
+  email: string;
+  phone: string;
+  joinedAt: string;
+  lastAccessAt: string;
+  approved: boolean;
+};
+
+/** 회원이 직접 입력하는 항목 */
+export type MemberFields = Pick<
+  Member,
+  "name" | "university" | "department" | "grade" | "studentId" | "email" | "phone"
+>;
+
 /** draft: 작성 중, approved: 관리자 확인 완료, sent: 발송 완료 */
 export type FeedbackStatus = "draft" | "approved" | "sent";
 

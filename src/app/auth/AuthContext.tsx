@@ -22,6 +22,8 @@ type AuthState = {
   pending: boolean;
   /** 성공하면 로그인 사용자, 실패·취소하면 null (안내는 토스트로 표시) */
   signIn: () => Promise<AuthUser | null>;
+  /** 관리자 비밀번호 로그인. 비밀번호가 틀리면 null */
+  signInAdmin: (password: string) => Promise<AuthUser | null>;
   signOut: () => Promise<void>;
 };
 
@@ -41,7 +43,10 @@ export const AuthProvider: React.FC<{
   useEffect(() => service.prepare(), [service]);
 
   const withRole = useCallback(
-    (id: AuthIdentity): AuthUser => ({ ...id, role: resolveRole(id.email, instructorEmails ?? []) }),
+    (id: AuthIdentity): AuthUser => ({
+      ...id,
+      role: id.provider === "admin" ? "instructor" : resolveRole(id.email, instructorEmails ?? []),
+    }),
     [instructorEmails],
   );
 
@@ -66,6 +71,24 @@ export const AuthProvider: React.FC<{
     }
   }, [service, toast, withRole]);
 
+  const signInAdmin = useCallback(
+    async (password: string) => {
+      setPending(true);
+      try {
+        const id = await service.signInAsAdmin(password);
+        if (!id) return null;
+        setIdentity(id);
+        toast.show("관리자로 로그인했습니다.", "success");
+        return withRole(id);
+      } catch {
+        return null;
+      } finally {
+        setPending(false);
+      }
+    },
+    [service, toast, withRole],
+  );
+
   const signOut = useCallback(async () => {
     gmailService.clear(); // Gmail 발송 토큰이 있으면 폐기하고 메모리에서 지운다.
     await service.signOut();
@@ -80,9 +103,10 @@ export const AuthProvider: React.FC<{
       configured: service.configured,
       pending,
       signIn,
+      signInAdmin,
       signOut,
     }),
-    [user, instructorEmails, service.configured, pending, signIn, signOut],
+    [user, instructorEmails, service.configured, pending, signIn, signInAdmin, signOut],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   /** 선택: 최초 교수자 Google 이메일 */
   readonly VITE_INITIAL_INSTRUCTOR_EMAIL?: string;
+  /** 선택: 관리자 비밀번호의 SHA-256 (16진수). 없으면 관리자 로그인을 쓸 수 없다. */
+  readonly VITE_ADMIN_PASSWORD_SHA256?: string;
 }
 
 interface ImportMeta {

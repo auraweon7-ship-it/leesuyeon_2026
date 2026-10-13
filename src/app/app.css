@@ -154,6 +154,37 @@ img { max-width: 100%; display: block; }
   transition: box-shadow 0.2s;
 }
 .google-btn:hover { box-shadow: var(--shadow-hover); }
+.auth-actions { display: flex; align-items: center; gap: 8px; }
+.admin-login-btn {
+  width: 44px; height: 44px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  background: #fff; border: 1px solid #dbe6f0; color: var(--sky-700);
+  box-shadow: 0 2px 6px rgba(31, 53, 80, 0.06);
+  transition: box-shadow 0.2s;
+}
+.admin-login-btn:hover { box-shadow: var(--shadow-hover); }
+.modal.admin-login { width: min(380px, 100%); display: flex; flex-direction: column; gap: 12px; }
+.modal.admin-login h2 { font-size: 20px; font-weight: 800; }
+.members-btn {
+  display: inline-flex; align-items: center; gap: 8px; flex: none;
+  height: 44px; padding: 0 16px; border-radius: 999px;
+  background: #fff; border: 1px solid #dbe6f0; color: var(--sky-700); font-weight: 700; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(31, 53, 80, 0.06);
+  transition: box-shadow 0.2s;
+}
+.members-btn:hover { box-shadow: var(--shadow-hover); }
+.modal.member-join, .modal.members-modal { display: flex; flex-direction: column; gap: 12px; }
+.modal.member-join h2, .modal.members-modal h2 { font-size: 20px; font-weight: 800; }
+.modal.members-modal { width: min(1240px, 100%); }
+.modal.members-modal:has(.member-form) { width: min(560px, 100%); }
+.members-modal .data-table td { white-space: nowrap; vertical-align: middle; }
+.member-form { display: flex; flex-direction: column; gap: 12px; }
+.member-form-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.approve-btn {
+  padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+  background: var(--pink); color: var(--pink-ink);
+}
+.approve-btn.on { background: var(--mint); color: #1f7a5b; }
 .profile { position: relative; }
 .profile-btn {
   display: flex; align-items: center; gap: 10px;
@@ -1081,6 +1112,9 @@ button.week-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-h
   .recent-scenes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .google-btn span { font-size: 13px; }
   .google-btn { padding: 0 12px; height: 40px; }
+  .admin-login-btn { width: 40px; height: 40px; }
+  .members-btn { height: 40px; padding: 0 12px; }
+  .members-btn span { display: none; }
   .card { padding: 16px; }
   .video-controls .btn { flex: 1; }
   .video-controls .link-btn { margin-left: 0; }
