@@ -81,6 +81,7 @@ export const AuthProvider: React.FC<{
         toast.show("관리자로 로그인했습니다.", "success");
         return withRole(id);
       } catch {
+        toast.show("관리자 로그인을 확인할 수 없어요. 서버의 ADMIN_PASSWORD 설정을 확인해 주세요.", "error");
         return null;
       } finally {
         setPending(false);

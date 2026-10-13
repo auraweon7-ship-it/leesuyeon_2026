@@ -5,10 +5,7 @@ interface ImportMetaEnv {
   /** Google OAuth 클라이언트 ID (웹 애플리케이션 유형) */
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   /** 선택: 최초 교수자 Google 이메일 */
-  readonly VITE_INITIAL_INSTRUCTOR_EMAIL?: string;
-  /** 선택: 관리자 비밀번호의 SHA-256 (16진수). 없으면 관리자 로그인을 쓸 수 없다. */
-  readonly VITE_ADMIN_PASSWORD_SHA256?: string;
-}
+  readonly VITE_INITIAL_INSTRUCTOR_EMAIL?: string;}
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;

@@ -93,6 +93,9 @@ VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 
 # (선택) 최초 교수자 Google 이메일 — 이 계정으로 로그인하면 교수자 메뉴가 열립니다
 VITE_INITIAL_INSTRUCTOR_EMAIL=instructor@example.com
+
+# (선택) 관리자 로그인 비밀번호 — 서버에서만 확인하며 빌드 결과에 포함되지 않습니다
+ADMIN_PASSWORD=your-admin-password
 ```
 
 - `VITE_` 변수는 빌드 결과에 포함되므로 **공개되어도 되는 값만** 넣습니다. Client Secret은 사용하지 않으며 넣지 않습니다.

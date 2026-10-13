@@ -57,7 +57,7 @@ export interface AuthService {
   prepare(): void;
   getCurrentUser(): AuthIdentity | null;
   signInWithGoogle(): Promise<AuthIdentity>;
-  /** 관리자 비밀번호 로그인. 비밀번호가 틀리면 null */
+  /** 관리자 비밀번호 로그인. 비밀번호가 틀리면 null, 서버에서 확인할 수 없으면 실패(reject) */
   signInAsAdmin(password: string): Promise<AuthIdentity | null>;
   signOut(): Promise<void>;
 }
@@ -70,9 +70,9 @@ const LEGACY_DEMO_KEY = "zhuiju.demoUser";
 
 const AVATAR_COLORS = ["#A9D6F5", "#F6D3DF", "#C9EBDD", "#DCD5F7", "#FBE3B5"];
 
-// 관리자 비밀번호의 SHA-256 (.env). 값이 없으면 관리자 로그인은 항상 실패한다.
-// 브라우저에서만 확인하므로 화면 접근 제어 수준이며 서버 권한 검증이 아니다.
-const ADMIN_PASSWORD_SHA256 = (import.meta.env.VITE_ADMIN_PASSWORD_SHA256 ?? "").trim().toLowerCase();
+// 관리자 비밀번호는 서버 환경변수 ADMIN_PASSWORD 에 두고 /api/admin/login 으로 확인한다. (번들에 넣지 않음)
+// 로그인 이후 화면 접근 제어는 브라우저에서 이루어지므로 서버 권한 검증은 아니다.
+const ADMIN_LOGIN_URL = "/api/admin/login";
 const ADMIN_IDENTITY: AuthIdentity = {
   id: "admin",
   name: "관리자",
@@ -80,11 +80,6 @@ const ADMIN_IDENTITY: AuthIdentity = {
   picture: null,
   avatarColor: AVATAR_COLORS[0],
   provider: "admin",
-};
-
-const sha256Hex = async (text: string) => {
-  const digest = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
 };
 
 const avatarColorFor = (email: string) => {
@@ -212,7 +207,14 @@ const createGoogleAuthService = (): AuthService => {
       });
     },
     async signInAsAdmin(password) {
-      if (!ADMIN_PASSWORD_SHA256 || (await sha256Hex(password)) !== ADMIN_PASSWORD_SHA256) return null;
+      const res = await fetch(ADMIN_LOGIN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.status === 401) return null;
+      // 그 외 실패(서버에 ADMIN_PASSWORD 미설정 등)는 틀린 비밀번호와 구분한다.
+      if (!res.ok) throw new Error(`admin-login ${res.status}`);
       fail("cancelled");
       storage.set(ADMIN_IDENTITY);
       return ADMIN_IDENTITY;
