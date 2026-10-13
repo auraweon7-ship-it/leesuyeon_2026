@@ -34,7 +34,8 @@
     "typecheck": "tsc --noEmit",
     "app": "vite",
     "app:build": "vite build",
-    "app:preview": "vite preview"
+    "app:preview": "vite preview",
+    "start": "vite preview"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

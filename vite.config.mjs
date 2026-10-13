@@ -9,5 +9,12 @@ export default defineConfig({
   // 로컬 자막 API (/api/youtube/*) — npm run app 실행 시 함께 동작
   plugins: [youtubeCaptionsPlugin()],
   server: { port: 5173, strictPort: true },
+  // 배포(Railway) — npm start 가 vite preview 로 빌드 결과와 자막 API를 함께 서비스한다
+  preview: {
+    host: true,
+    port: Number(process.env.PORT) || 4173,
+    strictPort: true,
+    allowedHosts: [".railway.app", process.env.RAILWAY_PUBLIC_DOMAIN].filter(Boolean),
+  },
   build: { outDir: "dist-app" },
 });
